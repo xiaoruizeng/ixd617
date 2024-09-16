@@ -16,7 +16,7 @@
 	--color-white-text: #fff;
 	--color-border-light: #E2E8F0;
 
-	--font-sans: 'Rubik', Arial, sans-serif, system-ui;
+	--font-sans: 'Rubik';
 
 	--font-regular: 400;
 	--font-medium: 500;
@@ -57,7 +57,7 @@ h1 {
 }
 
 h2 {
-	font-size: var(--font-size-40);
+	font-size: var(--font-size-36);
 }
 
 h3 {
