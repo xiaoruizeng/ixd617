@@ -179,8 +179,12 @@ footer {
 
 .header-text h1, .header-text p {
 	max-width: 500px;
-	margin: 40 auto;
+	margin: 0 auto;
 }
+
+.important-text p {
+	margin-top: 40;
+	}
 
 .header-image {
     flex: 1;
@@ -224,3 +228,5 @@ footer {
     flex-direction: column;
     gap: 8px;
 }
+
+
