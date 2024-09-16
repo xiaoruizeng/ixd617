@@ -179,7 +179,7 @@ footer {
 
 .header-text h1, .header-text p {
 	max-width: 500px;
-	margin: 0 auto;
+	margin: 40 auto;
 }
 
 .header-image {
