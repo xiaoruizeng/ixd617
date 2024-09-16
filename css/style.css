@@ -15,6 +15,7 @@
 	--color-tertiary-text: #64748B;
 	--color-white-text: #fff;
 	--color-border-light: #E2E8F0;
+	--color-background-light: #FAFBFF;
 
 	--font-sans: 'Rubik';
 
@@ -91,7 +92,7 @@ p:last-child {
 }
 
 a {
-	color: var(--color-secondary-text);
+	color: var(--color-primary-text);
 	font-weight: var(--font-medium);
 	font-size: var(--font-size-16);
 	text-decoration: none;
@@ -101,7 +102,7 @@ a {
 
 .important-text {
     font-size: var(--font-size-20);
-    color: var(--color-secondary-text);
+    color: var(--color-primary-text);
     margin-top: 12px;
 }
 
