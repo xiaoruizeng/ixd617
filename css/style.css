@@ -8,15 +8,15 @@
 }
 
 :root {
-	--color-background: #F4F5F6;
+	--color-background: #0D0D2B;
 
-	--color-primary-text: #0F172A;
+	--color-primary-text: #FFF;
 	--color-secondary-text: #334155;
 	--color-tertiary-text: #64748B;
 	--color-white-text: #fff;
 	--color-border-light: #E2E8F0;
 
-	--font-sans: 'Inter', Arial, sans-serif, system-ui;
+	--font-sans: 'Rubik', Arial, sans-serif, system-ui;
 
 	--font-regular: 400;
 	--font-medium: 500;
@@ -57,7 +57,7 @@ h1 {
 }
 
 h2 {
-	font-size: var(--font-size-36);
+	font-size: var(--font-size-40);
 }
 
 h3 {
@@ -159,8 +159,8 @@ footer {
 }
 
 
-/*hero section*/
-.hero {
+/*header section*/
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -170,34 +170,34 @@ footer {
     background-color: var(--color-background);
 }
 
-.hero-text {
+.header-text {
     flex: 1;
 }
 
-.hero-text h1, .hero-text p {
+.header-text h1, .header-text p {
 	max-width: 500px;
 	margin: 0 auto;
 }
 
-.hero-image {
+.header-image {
     flex: 1;
     height: 100%;
     position: relative;
     overflow: hidden;
 }
 
-.hero-image img {
+.header-image img {
     width: 100%;
     height: auto;
     display: block;
 }
 
 @media (max-width: 900px) {
-	.hero-text h1, .hero-text p {
+	.header-text h1, .header-text p {
 		text-align: center;
 	}
 
-	.hero-image {
+	.header-image {
 		display: none !important;
 	}
 }
