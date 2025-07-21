@@ -1,0 +1,420 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8f9fa;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.workflow-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header Styles */
+.workflow-header {
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.header-left h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.workflow-info {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.loan-selector {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+}
+
+.test-input {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 200px;
+}
+
+.run-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.publish-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.settings-btn {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Toolbar Styles */
+.toolbar {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e5e9;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.zoom-controls, .view-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.toolbar button {
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #374151;
+}
+
+.toolbar button:hover {
+    background: #f3f4f6;
+}
+
+/* Main Layout */
+.workflow-container > main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 200px;
+    background: white;
+    border-right: 1px solid #e1e5e9;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.sidebar h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.node-palette {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.node-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: grab;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.node-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.node-item:active {
+    cursor: grabbing;
+}
+
+.node-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+/* Node Type Colors */
+.variable-node {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
+}
+
+.variable-node .node-icon {
+    background: #3b82f6;
+}
+
+.function-node {
+    background: #fed7aa;
+    color: #c2410c;
+    border-color: #fdba74;
+}
+
+.function-node .node-icon {
+    background: #f97316;
+}
+
+.llm-node {
+    background: #e0e7ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
+}
+
+.llm-node .node-icon {
+    background: #6366f1;
+}
+
+.llm-function-node {
+    background: #f3e8ff;
+    color: #7c3aed;
+    border-color: #ddd6fe;
+}
+
+.llm-function-node .node-icon {
+    background: #8b5cf6;
+}
+
+.tool-node {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+.tool-node .node-icon {
+    background: #f59e0b;
+}
+
+.foreach-node {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.foreach-node .node-icon {
+    background: #10b981;
+}
+
+.condition-node {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+.condition-node .node-icon {
+    background: #ef4444;
+}
+
+/* Canvas Styles */
+.canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #f8f9fa;
+    background-image: 
+        radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.connections-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+/* Workflow Node Styles */
+.workflow-node {
+    position: absolute;
+    min-width: 160px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: move;
+    user-select: none;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.workflow-node:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.workflow-node.selected {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+}
+
+.workflow-node.dragging {
+    z-index: 1000;
+    transform: rotate(2deg);
+}
+
+.node-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.node-title {
+    flex: 1;
+    color: #1f2937;
+}
+
+.node-body {
+    padding: 12px 16px;
+}
+
+.node-field {
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.node-field:last-child {
+    margin-bottom: 0;
+}
+
+.node-field label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.node-field input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Connection Points */
+.connection-point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: crosshair;
+    z-index: 10;
+}
+
+.connection-point.input {
+    left: -6px;
+    background: #6b7280;
+}
+
+.connection-point.output {
+    right: -6px;
+    background: #3b82f6;
+}
+
+.connection-point:hover {
+    transform: scale(1.2);
+}
+
+/* Connection Lines */
+.connection-line {
+    stroke: #6b7280;
+    stroke-width: 2;
+    fill: none;
+    marker-end: url(#arrowhead);
+}
+
+.connection-line.active {
+    stroke: #3b82f6;
+    stroke-width: 3;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 160px;
+    }
+    
+    .header-right .test-input {
+        width: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .workflow-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+    
+    .header-right {
+        justify-content: space-between;
+    }
+    
+    .sidebar {
+        display: none;
+    }
+}

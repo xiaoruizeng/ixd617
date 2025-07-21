@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Editor - Loan Processing</title>
+    <link rel="stylesheet" href="css/workflow-editor.css">
+</head>
+<body>
+    <div class="workflow-container">
+        <!-- Header -->
+        <header class="workflow-header">
+            <div class="header-left">
+                <h1>Loan Processing Workflow</h1>
+                <div class="workflow-info">
+                    <span class="auto-save">Auto-saved 15:00:00</span>
+                    <span class="publish-status">Published 33 minutes ago</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <select class="loan-selector">
+                    <option>Loan</option>
+                </select>
+                <input type="text" class="test-input" placeholder="Enter test loan number to run">
+                <button class="run-btn">▶ Run</button>
+                <button class="publish-btn">Publish ▼</button>
+                <button class="settings-btn">⚙</button>
+            </div>
+        </header>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="zoom-controls">
+                <button class="zoom-btn">🔍 100%</button>
+                <button class="zoom-fit">⊞</button>
+                <button class="zoom-reset">↺</button>
+                <button class="zoom-out">−</button>
+                <button class="zoom-in">+</button>
+            </div>
+            <div class="view-controls">
+                <button class="grid-btn">▦</button>
+                <button class="fullscreen-btn">⛶</button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Nodes</h3>
+            <div class="node-palette">
+                <div class="node-category">
+                    <div class="node-item variable-node" draggable="true" data-type="variable">
+                        <span class="node-icon">V</span>
+                        <span>Variable</span>
+                    </div>
+                    <div class="node-item function-node" draggable="true" data-type="function">
+                        <span class="node-icon">f</span>
+                        <span>Function</span>
+                    </div>
+                    <div class="node-item llm-node" draggable="true" data-type="llm">
+                        <span class="node-icon">🤖</span>
+                        <span>LLM</span>
+                    </div>
+                    <div class="node-item llm-function-node" draggable="true" data-type="llm-function">
+                        <span class="node-icon">⚡</span>
+                        <span>LLM Function</span>
+                    </div>
+                    <div class="node-item tool-node" draggable="true" data-type="tool">
+                        <span class="node-icon">🔧</span>
+                        <span>Tool</span>
+                    </div>
+                    <div class="node-item foreach-node" draggable="true" data-type="foreach">
+                        <span class="node-icon">↻</span>
+                        <span>ForEach</span>
+                    </div>
+                    <div class="node-item condition-node" draggable="true" data-type="condition">
+                        <span class="node-icon">?</span>
+                        <span>Condition</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas -->
+        <main class="canvas-container">
+            <svg class="connections-layer" width="100%" height="100%">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                            refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+                    </marker>
+                </defs>
+            </svg>
+            <div class="canvas" id="workflow-canvas">
+                <!-- Nodes will be dynamically added here -->
+            </div>
+        </main>
+    </div>
+
+    <script src="js/workflow-editor.js"></script>
+</body>
+</html>
