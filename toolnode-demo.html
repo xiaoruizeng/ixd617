@@ -188,11 +188,15 @@
         .toolnode {
             background: white;
             border: 2px solid #e9ecef;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
         }
 
         .toolnode:hover {
@@ -201,25 +205,88 @@
             box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
         }
 
+        .toolnode-icon {
+            width: 40px;
+            height: 40px;
+            background: #ffc107;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+        }
+
+        .toolnode-content {
+            flex: 1;
+        }
+
         .toolnode h3 {
             color: #333;
             margin-bottom: 8px;
             font-size: 1.2rem;
+            margin-top: 0;
         }
 
         .toolnode p {
             color: #666;
             font-size: 14px;
+            margin: 0;
         }
 
         .toolnode .level-indicator {
-            display: inline-block;
+            position: absolute;
+            top: 10px;
+            right: 10px;
             padding: 4px 8px;
             background: #667eea;
             color: white;
             border-radius: 4px;
             font-size: 12px;
-            margin-bottom: 10px;
+        }
+
+        .workflow-node {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .workflow-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .workflow-icon.input {
+            background: #28a745;
+        }
+
+        .workflow-icon.process {
+            background: #17a2b8;
+        }
+
+        .workflow-icon.output {
+            background: #6f42c1;
+        }
+
+        .workflow-icon.tool {
+            background: #ffc107;
         }
 
         .mode-description {
@@ -228,16 +295,55 @@
             padding: 15px;
             margin-bottom: 20px;
             border-radius: 0 4px 4px 0;
+            position: relative;
+        }
+
+        .mode-description.mode1 {
+            background: #e8f5e8;
+            border-left-color: #4caf50;
+        }
+
+        .mode-description.mode2 {
+            background: #fff3e0;
+            border-left-color: #ff9800;
         }
 
         .mode-description h4 {
             color: #1976d2;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mode-description.mode1 h4 {
+            color: #2e7d32;
+        }
+
+        .mode-description.mode2 h4 {
+            color: #f57c00;
         }
 
         .mode-description p {
             color: #424242;
             font-size: 14px;
+        }
+
+        .mode-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .mode-badge.recommended {
+            background: #4caf50;
+        }
+
+        .mode-badge.alternative {
+            background: #ff9800;
         }
 
         .hidden {
@@ -424,19 +530,26 @@
             getModeDescription() {
                 const descriptions = {
                     mode1: {
-                        title: '模式一：主流程新Tab + 嵌套Breadcrumb（推荐）',
-                        desc: '主流程中的ToolNode（A、B）点击后开新tab，但内部的子节点（A1、A2）只在当前tab内用breadcrumb切换'
+                        title: '模式一：主流程新Tab + 嵌套Breadcrumb',
+                        desc: '主流程中的ToolNode点击后开新tab，但内部的子节点只在当前tab内用breadcrumb切换，减少tab数量，保持层次清晰',
+                        badge: 'recommended',
+                        badgeText: '推荐'
                     },
                     mode2: {
                         title: '模式二：所有节点都新Tab（Flat结构）',
-                        desc: '无论来自哪里，点击任何ToolNode都会新开tab，没有breadcrumb，只能靠tab切换'
+                        desc: '无论来自哪里，点击任何ToolNode都会新开tab，没有breadcrumb，完全扁平的导航结构',
+                        badge: 'alternative', 
+                        badgeText: '备选'
                     }
                 };
 
                 const desc = descriptions[this.currentMode];
                 return `
-                    <div class="mode-description">
-                        <h4>${desc.title}</h4>
+                    <div class="mode-description ${this.currentMode}">
+                        <h4>
+                            ${desc.title}
+                            <span class="mode-badge ${desc.badge}">${desc.badgeText}</span>
+                        </h4>
                         <p>${desc.desc}</p>
                     </div>
                 `;
@@ -460,16 +573,15 @@
                 const contents = {
                     'main': this.getMainContent(),
                     '主流程': this.getMainContent(),
-                    'tool_a': this.getToolAContent(),
-                    'tool_b': this.getToolBContent(),
-                    'tool_c': this.getToolCContent(),
-                    'sub_a1': this.getSubA1Content(),
-                    'sub_a2': this.getSubA2Content(),
-                    'sub_a3': this.getSubA3Content(),
-                    'sub_b1': this.getSubB1Content(),
-                    'sub_b2': this.getSubB2Content(),
-                    'deep_a1_1': this.getDeepA1_1Content(),
-                    'deep_a1_2': this.getDeepA1_2Content()
+                    'foreach_parse_bank_statements': this.getForEachParseContent(),
+                    'get_latest_bank_statement': this.getLatestBankStatementContent(),
+                    'update_assets': this.getUpdateAssetsContent(),
+                    'read_doc': this.getReadDocContent(),
+                    'parse_bank_statement': this.getParseBankStatementContent(),
+                    'item': this.getItemContent(),
+                    'output': this.getOutputContent(),
+                    'deep_parse_1': this.getDeepParseContent(),
+                    'deep_parse_2': this.getDeepParseContent2()
                 };
 
                 return contents[contentType] || `<h2>内容：${contentType}</h2><p>这是 ${contentType} 的内容</p>`;
@@ -477,198 +589,294 @@
 
             getMainContent() {
                 return `
-                    <h2>主流程 ToolNodes</h2>
+                    <h2>贷款处理工作流</h2>
+                    <p>点击下方的工具节点体验不同的导航模式</p>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon input">📄</div>
+                        <div>
+                            <h4>获取文档</h4>
+                            <p>收集客户提交的贷款申请材料</p>
+                        </div>
+                    </div>
+                    
                     <div class="toolnode-grid">
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('tool_a', 'Tool A', 1)">
-                            <div class="level-indicator">Level 1</div>
-                            <h3>Tool A - 数据分析</h3>
-                            <p>主要的数据分析工具，包含多个子功能模块</p>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('foreach_parse_bank_statements', '解析银行流水', 1)">
+                            <div class="toolnode-icon">🔧</div>
+                            <div class="toolnode-content">
+                                <div class="level-indicator">ToolNode</div>
+                                <h3>解析银行流水</h3>
+                                <p>批量处理和解析银行对账单数据</p>
+                            </div>
                         </div>
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('tool_b', 'Tool B', 1)">
-                            <div class="level-indicator">Level 1</div>
-                            <h3>Tool B - 报表生成</h3>
-                            <p>生成各种类型的报表和图表</p>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('get_latest_bank_statement', '获取最新银行流水', 1)">
+                            <div class="toolnode-icon">🔧</div>
+                            <div class="toolnode-content">
+                                <div class="level-indicator">ToolNode</div>
+                                <h3>获取最新银行流水</h3>
+                                <p>从系统中获取客户最新的银行流水记录</p>
+                            </div>
                         </div>
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('tool_c', 'Tool C', 1)">
-                            <div class="level-indicator">Level 1</div>
-                            <h3>Tool C - 系统配置</h3>
-                            <p>系统参数配置和管理功能</p>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('update_assets', '更新资产信息', 1)">
+                            <div class="toolnode-icon">🔧</div>
+                            <div class="toolnode-content">
+                                <div class="level-indicator">ToolNode</div>
+                                <h3>更新资产信息</h3>
+                                <p>更新客户的资产和负债信息</p>
+                            </div>
                         </div>
                     </div>
                 `;
             }
 
-            getToolAContent() {
+            getForEachParseContent() {
                 return `
-                    <h2>Tool A - 数据分析</h2>
-                    <p>这是数据分析工具的主页面，包含以下子功能：</p>
+                    <h2>解析银行流水</h2>
+                    <p>批量处理银行对账单，解析交易记录和账户信息</p>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon process">⚙️</div>
+                        <div>
+                            <h4>处理流程</h4>
+                            <p>遍历所有银行流水文件进行解析</p>
+                        </div>
+                    </div>
+                    
                     <div class="toolnode-grid">
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_a1', 'A1 - 数据导入', 2)">
-                            <div class="level-indicator">Level 2</div>
-                            <h3>A1 - 数据导入</h3>
-                            <p>支持多种格式的数据导入功能</p>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('read_doc', '读取文档', 2)">
+                            <div class="toolnode-icon">🔧</div>
+                            <div class="toolnode-content">
+                                <div class="level-indicator">ToolNode</div>
+                                <h3>读取文档</h3>
+                                <p>读取并解析银行流水PDF文档</p>
+                            </div>
                         </div>
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_a2', 'A2 - 数据清洗', 2)">
-                            <div class="level-indicator">Level 2</div>
-                            <h3>A2 - 数据清洗</h3>
-                            <p>数据预处理和清洗工具</p>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('parse_bank_statement', '解析银行对账单', 2)">
+                            <div class="toolnode-icon">🔧</div>
+                            <div class="toolnode-content">
+                                <div class="level-indicator">ToolNode</div>
+                                <h3>解析银行对账单</h3>
+                                <p>提取交易记录、余额等关键信息</p>
+                            </div>
                         </div>
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_a3', 'A3 - 统计分析', 2)">
-                            <div class="level-indicator">Level 2</div>
-                            <h3>A3 - 统计分析</h3>
-                            <p>各种统计分析方法和算法</p>
+                    </div>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon output">📊</div>
+                        <div>
+                            <h4>输出结果</h4>
+                            <p>结构化的银行流水数据</p>
                         </div>
                     </div>
                 `;
             }
 
-            getToolBContent() {
+            getLatestBankStatementContent() {
                 return `
-                    <h2>Tool B - 报表生成</h2>
-                    <p>报表生成工具的功能模块：</p>
+                    <h2>获取最新银行流水</h2>
+                    <p>从系统数据库中检索客户最新的银行流水记录</p>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon process">🔍</div>
+                        <div>
+                            <h4>查询过程</h4>
+                            <p>根据客户ID和时间范围查询最新记录</p>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>查询参数</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>客户ID: 唯一标识符</li>
+                            <li>时间范围: 最近3个月</li>
+                            <li>账户类型: 储蓄/支票账户</li>
+                            <li>数据状态: 已验证的记录</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon output">📋</div>
+                        <div>
+                            <h4>返回数据</h4>
+                            <p>最新的银行流水记录列表</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getUpdateAssetsContent() {
+                return `
+                    <h2>更新资产信息</h2>
+                    <p>根据最新的银行流水和财务数据更新客户资产负债表</p>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon process">💰</div>
+                        <div>
+                            <h4>更新流程</h4>
+                            <p>计算并更新客户的资产和负债信息</p>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>更新内容</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>银行存款余额</li>
+                            <li>投资组合价值</li>
+                            <li>房产估值</li>
+                            <li>负债总额</li>
+                            <li>净资产计算</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon output">📊</div>
+                        <div>
+                            <h4>更新结果</h4>
+                            <p>最新的客户资产负债表</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getReadDocContent() {
+                return `
+                    <h2>读取文档</h2>
+                    <p>读取和解析银行流水PDF文档，提取文本内容</p>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon process">📖</div>
+                        <div>
+                            <h4>读取流程</h4>
+                            <p>解析PDF文档并提取结构化数据</p>
+                        </div>
+                    </div>
+                    
                     <div class="toolnode-grid">
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_b1', 'B1 - 图表设计', 2)">
-                            <div class="level-indicator">Level 2</div>
-                            <h3>B1 - 图表设计</h3>
-                            <p>可视化图表的设计和配置</p>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('deep_parse_1', '解析文档结构', 3)">
+                            <div class="toolnode-icon">🔧</div>
+                            <div class="toolnode-content">
+                                <div class="level-indicator">ToolNode</div>
+                                <h3>解析文档结构</h3>
+                                <p>识别表格、段落等文档结构</p>
+                            </div>
                         </div>
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_b2', 'B2 - 报表模板', 2)">
-                            <div class="level-indicator">Level 2</div>
-                            <h3>B2 - 报表模板</h3>
-                            <p>预设的报表模板和自定义选项</p>
-                        </div>
-                    </div>
-                `;
-            }
-
-            getToolCContent() {
-                return `
-                    <h2>Tool C - 系统配置</h2>
-                    <p>系统配置和管理功能，这是一个相对简单的工具，没有复杂的子功能。</p>
-                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <h4>配置选项</h4>
-                        <ul style="margin-top: 10px; padding-left: 20px;">
-                            <li>用户权限管理</li>
-                            <li>系统参数设置</li>
-                            <li>数据库配置</li>
-                            <li>安全策略设置</li>
-                        </ul>
-                    </div>
-                `;
-            }
-
-            getSubA1Content() {
-                return `
-                    <h2>A1 - 数据导入</h2>
-                    <p>数据导入功能的详细配置和操作：</p>
-                    <div class="toolnode-grid">
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('deep_a1_1', 'A1.1 - CSV导入', 3)">
-                            <div class="level-indicator">Level 3</div>
-                            <h3>A1.1 - CSV导入</h3>
-                            <p>CSV文件的导入和解析</p>
-                        </div>
-                        <div class="toolnode" onclick="demo.handleToolNodeClick('deep_a1_2', 'A1.2 - 数据库连接', 3)">
-                            <div class="level-indicator">Level 3</div>
-                            <h3>A1.2 - 数据库连接</h3>
-                            <p>连接外部数据库导入数据</p>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('deep_parse_2', '提取交易数据', 3)">
+                            <div class="toolnode-icon">🔧</div>
+                            <div class="toolnode-content">
+                                <div class="level-indicator">ToolNode</div>
+                                <h3>提取交易数据</h3>
+                                <p>从文档中提取具体的交易记录</p>
+                            </div>
                         </div>
                     </div>
                 `;
             }
 
-            getSubA2Content() {
+            getParseBankStatementContent() {
                 return `
-                    <h2>A2 - 数据清洗</h2>
-                    <p>数据清洗工具提供以下功能：</p>
-                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <h4>清洗功能</h4>
+                    <h2>解析银行对账单</h2>
+                    <p>解析银行对账单内容，提取交易记录和账户信息</p>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon input">📝</div>
+                        <div>
+                            <h4>输入</h4>
+                            <p>银行对账单文档内容</p>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>解析内容</h4>
                         <ul style="margin-top: 10px; padding-left: 20px;">
-                            <li>缺失值处理</li>
-                            <li>异常值检测</li>
-                            <li>数据格式标准化</li>
-                            <li>重复数据去除</li>
+                            <li>账户基本信息</li>
+                            <li>交易记录详情</li>
+                            <li>余额变化情况</li>
+                            <li>收入支出分类</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon output">📊</div>
+                        <div>
+                            <h4>输出结果</h4>
+                            <p>结构化的银行交易数据</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getItemContent() {
+                return `
+                    <h2>数据项处理</h2>
+                    <p>处理单个银行流水数据项</p>
+                    
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>处理步骤</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>数据验证</li>
+                            <li>格式标准化</li>
+                            <li>分类标记</li>
+                            <li>质量检查</li>
                         </ul>
                     </div>
                 `;
             }
 
-            getSubA3Content() {
+            getOutputContent() {
                 return `
-                    <h2>A3 - 统计分析</h2>
-                    <p>提供各种统计分析方法：</p>
-                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <h4>分析方法</h4>
+                    <h2>输出结果</h2>
+                    <p>最终处理完成的银行流水数据</p>
+                    
+                    <div class="workflow-node">
+                        <div class="workflow-icon output">✅</div>
+                        <div>
+                            <h4>输出格式</h4>
+                            <p>JSON格式的结构化数据</p>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>数据结构</h4>
                         <ul style="margin-top: 10px; padding-left: 20px;">
-                            <li>描述性统计</li>
-                            <li>相关性分析</li>
-                            <li>回归分析</li>
-                            <li>假设检验</li>
+                            <li>账户信息</li>
+                            <li>交易列表</li>
+                            <li>统计摘要</li>
+                            <li>处理状态</li>
                         </ul>
                     </div>
                 `;
             }
 
-            getSubB1Content() {
+            getDeepParseContent() {
                 return `
-                    <h2>B1 - 图表设计</h2>
-                    <p>可视化图表的设计工具：</p>
-                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <h4>图表类型</h4>
+                    <h2>解析文档结构</h2>
+                    <p>深度解析PDF文档的结构和布局</p>
+                    
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>解析技术</h4>
                         <ul style="margin-top: 10px; padding-left: 20px;">
-                            <li>柱状图</li>
-                            <li>折线图</li>
-                            <li>饼图</li>
-                            <li>散点图</li>
-                            <li>热力图</li>
+                            <li>OCR文字识别</li>
+                            <li>表格检测</li>
+                            <li>版面分析</li>
+                            <li>字体识别</li>
                         </ul>
                     </div>
                 `;
             }
 
-            getSubB2Content() {
+            getDeepParseContent2() {
                 return `
-                    <h2>B2 - 报表模板</h2>
-                    <p>预设的报表模板管理：</p>
-                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <h4>模板类型</h4>
+                    <h2>提取交易数据</h2>
+                    <p>从解析的文档结构中提取具体的交易数据</p>
+                    
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                        <h4>提取字段</h4>
                         <ul style="margin-top: 10px; padding-left: 20px;">
-                            <li>财务报表</li>
-                            <li>销售报表</li>
-                            <li>运营报表</li>
-                            <li>自定义模板</li>
-                        </ul>
-                    </div>
-                `;
-            }
-
-            getDeepA1_1Content() {
-                return `
-                    <h2>A1.1 - CSV导入</h2>
-                    <p>CSV文件导入的详细配置：</p>
-                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <h4>导入选项</h4>
-                        <ul style="margin-top: 10px; padding-left: 20px;">
-                            <li>文件编码选择</li>
-                            <li>分隔符设置</li>
-                            <li>列头识别</li>
-                            <li>数据类型推断</li>
-                        </ul>
-                    </div>
-                `;
-            }
-
-            getDeepA1_2Content() {
-                return `
-                    <h2>A1.2 - 数据库连接</h2>
-                    <p>数据库连接配置：</p>
-                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <h4>支持的数据库</h4>
-                        <ul style="margin-top: 10px; padding-left: 20px;">
-                            <li>MySQL</li>
-                            <li>PostgreSQL</li>
-                            <li>SQL Server</li>
-                            <li>Oracle</li>
-                            <li>MongoDB</li>
+                            <li>交易日期</li>
+                            <li>交易金额</li>
+                            <li>交易对方</li>
+                            <li>交易描述</li>
+                            <li>账户余额</li>
                         </ul>
                     </div>
                 `;
