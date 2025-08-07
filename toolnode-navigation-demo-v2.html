@@ -355,17 +355,7 @@
             pointer-events: none;
         }
 
-        .view-only-label {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-        }
+
     </style>
 </head>
 <body>
@@ -471,12 +461,16 @@
 
         function renderTabs() {
             const tabBar = document.getElementById('tabBar');
-            tabBar.innerHTML = tabs.map(tab => `
-                <div class="tab ${tab.id === activeTab ? 'active' : ''}" data-tab="${tab.id}" onclick="switchTab('${tab.id}')">
-                    ${tab.title}
-                    ${tab.id !== 'main' ? `<button class="tab-close" onclick="closeTab('${tab.id}'); event.stopPropagation();">×</button>` : ''}
-                </div>
-            `).join('');
+            tabBar.innerHTML = tabs.map(tab => {
+                const isViewOnly = tab.id !== 'main';
+                const tabTitle = isViewOnly ? `View Only - ${tab.title}` : tab.title;
+                return `
+                    <div class="tab ${tab.id === activeTab ? 'active' : ''}" data-tab="${tab.id}" onclick="switchTab('${tab.id}')">
+                        ${tabTitle}
+                        ${tab.id !== 'main' ? `<button class="tab-close" onclick="closeTab('${tab.id}'); event.stopPropagation();">×</button>` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
         function switchTab(tabId) {
@@ -504,17 +498,14 @@
 
             const content = getContentByType(activeTabData.content);
             const showBreadcrumb = currentMode === 'mode1' && activeTabData.breadcrumb.length > 1;
-            const showViewOnly = activeTabData.id !== 'main'; // Only show View Only for non-main tabs
             
             // Debug log
             console.log('=== RENDER CONTENT DEBUG ===');
             console.log('Current tab ID:', activeTabData.id);
-            console.log('Show View Only:', showViewOnly);
-            console.log('activeTabData.id !== "main":', activeTabData.id !== 'main');
+            console.log('Tab title will show View Only:', activeTabData.id !== 'main');
             console.log('================================');
             
             document.getElementById('canvasContent').innerHTML = `
-                ${showViewOnly ? '<div class="view-only-label">View Only</div>' : ''}
                 ${getModeDescription()}
                 ${showBreadcrumb ? renderBreadcrumb(activeTabData.breadcrumb) : ''}
                 ${content}
