@@ -386,8 +386,6 @@
 
     <div class="workflow-container">
         <div class="main-canvas">
-            <div class="view-only-label">View Only</div>
-            
             <div class="tab-bar" id="tabBar">
                 <div class="tab active" data-tab="main">
                     Loan Processing Workflow
@@ -503,6 +501,7 @@
             const showBreadcrumb = currentMode === 'mode1' && activeTabData.breadcrumb.length > 1;
             
             document.getElementById('canvasContent').innerHTML = `
+                <div class="view-only-label">View Only</div>
                 ${getModeDescription()}
                 ${showBreadcrumb ? renderBreadcrumb(activeTabData.breadcrumb) : ''}
                 ${content}
@@ -513,23 +512,18 @@
             const descriptions = {
                 mode1: {
                     title: 'Mode 1: Main Flow New Tabs + Nested Breadcrumbs',
-                    desc: 'Main flow ToolNodes open new tabs, but nested nodes use breadcrumb navigation within the same tab',
-                    badge: 'Recommended'
+                    desc: 'Main flow ToolNodes open new tabs, but nested nodes use breadcrumb navigation within the same tab'
                 },
                 mode2: {
                     title: 'Mode 2: All ToolNodes Open New Tabs (Flat Structure)',
-                    desc: 'Every ToolNode click opens a new tab, no breadcrumb navigation - completely flat structure',
-                    badge: 'Alternative'
+                    desc: 'Every ToolNode click opens a new tab, no breadcrumb navigation - completely flat structure'
                 }
             };
 
             const desc = descriptions[currentMode];
             return `
                 <div class="mode-description ${currentMode}">
-                    <h3>
-                        ${desc.title}
-                        <span class="mode-badge ${currentMode === 'mode2' ? 'alternative' : ''}">${desc.badge}</span>
-                    </h3>
+                    <h3>${desc.title}</h3>
                     <p>${desc.desc}</p>
                 </div>
             `;
