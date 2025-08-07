@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loan Processing Workflow</title>
+    <!-- Updated: 2024-12-19 View Only fix -->
     <style>
         * {
             margin: 0;
@@ -500,6 +501,9 @@
             const content = getContentByType(activeTabData.content);
             const showBreadcrumb = currentMode === 'mode1' && activeTabData.breadcrumb.length > 1;
             const showViewOnly = activeTabData.id !== 'main'; // Only show View Only for non-main tabs
+            
+            // Debug log
+            console.log('Current tab ID:', activeTabData.id, 'Show View Only:', showViewOnly);
             
             document.getElementById('canvasContent').innerHTML = `
                 ${showViewOnly ? '<div class="view-only-label">View Only</div>' : ''}
