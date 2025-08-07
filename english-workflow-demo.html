@@ -556,7 +556,31 @@
                 'get_latest_bank_statement': getLatestBankStatementWorkflow(),
                 'update_assets': getUpdateAssetsWorkflow(),
                 'read_doc': getReadDocWorkflow(),
-                'parse_bank_statement': getParseBankStatementWorkflow()
+                'parse_bank_statement': getParseBankStatementWorkflow(),
+                // Level 3 ToolNodes
+                'extract_text': getExtractTextWorkflow(),
+                'validate_format': getValidateFormatWorkflow(),
+                'parse_transactions': getParseTransactionsWorkflow(),
+                'extract_metadata': getExtractMetadataWorkflow(),
+                'query_database': getQueryDatabaseWorkflow(),
+                'filter_records': getFilterRecordsWorkflow(),
+                'format_output': getFormatOutputWorkflow(),
+                'calculate_balance': getCalculateBalanceWorkflow(),
+                'update_portfolio': getUpdatePortfolioWorkflow(),
+                'generate_report': getGenerateReportWorkflow(),
+                // Level 4 ToolNodes
+                'ocr_processing': getOCRProcessingWorkflow(),
+                'text_cleanup': getTextCleanupWorkflow(),
+                'schema_validation': getSchemaValidationWorkflow(),
+                'data_normalization': getDataNormalizationWorkflow(),
+                'transaction_categorization': getTransactionCategorizationWorkflow(),
+                'amount_extraction': getAmountExtractionWorkflow(),
+                'date_parsing': getDateParsingWorkflow(),
+                'account_identification': getAccountIdentificationWorkflow(),
+                'sql_query_builder': getSQLQueryBuilderWorkflow(),
+                'connection_manager': getConnectionManagerWorkflow(),
+                'result_pagination': getResultPaginationWorkflow(),
+                'cache_management': getCacheManagementWorkflow()
             };
 
             return contents[contentType] || `
@@ -709,11 +733,42 @@
                                 <div class="node-subtitle">Input Parameter</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Level 3 ToolNodes -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('extract_text', 'extract_text', 3)">
+                            <div class="node-icon read-doc">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">extract_text</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
 
                         <div class="flow-connector">
                             <div class="flow-arrow-right">→</div>
                         </div>
 
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('validate_format', 'validate_format', 3)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">validate_format</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
                         <div class="workflow-node">
                             <div class="node-icon output">📄</div>
                             <div class="node-content">
@@ -736,6 +791,35 @@
                                 <div class="node-title">request</div>
                                 <div class="node-subtitle">Input Request</div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Level 3 ToolNodes -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('parse_transactions', 'parse_transactions', 3)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">parse_transactions</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('extract_metadata', 'extract_metadata', 3)">
+                            <div class="node-icon foreach">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">extract_metadata</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
                         </div>
                     </div>
 
@@ -767,11 +851,55 @@
                                 <div class="node-subtitle">Query Request</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Level 3 ToolNodes -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('query_database', 'query_database', 3)">
+                            <div class="node-icon get-latest">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">query_database</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
 
                         <div class="flow-connector">
                             <div class="flow-arrow-right">→</div>
                         </div>
 
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('filter_records', 'filter_records', 3)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">filter_records</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('format_output', 'format_output', 3)">
+                            <div class="node-icon foreach">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">format_output</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
                         <div class="workflow-node">
                             <div class="node-icon output">📋</div>
                             <div class="node-content">
@@ -795,11 +923,55 @@
                                 <div class="node-subtitle">Bank Statement Input</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Level 3 ToolNodes -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('calculate_balance', 'calculate_balance', 3)">
+                            <div class="node-icon update-assets">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">calculate_balance</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
 
                         <div class="flow-connector">
                             <div class="flow-arrow-right">→</div>
                         </div>
 
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('update_portfolio', 'update_portfolio', 3)">
+                            <div class="node-icon foreach">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">update_portfolio</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('generate_report', 'generate_report', 3)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">generate_report</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
                         <div class="workflow-node">
                             <div class="node-icon output">💰</div>
                             <div class="node-content">
@@ -825,6 +997,421 @@
         function zoomIn() { console.log('Zoom in'); }
         function zoomOut() { console.log('Zoom out'); }
         function zoomFit() { console.log('Zoom fit'); }
+
+        // Level 3 ToolNode Workflows
+        function getExtractTextWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">document</div>
+                                <div class="node-subtitle">Input Document</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Level 4 ToolNodes -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('ocr_processing', 'ocr_processing', 4)">
+                            <div class="node-icon read-doc">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">ocr_processing</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('text_cleanup', 'text_cleanup', 4)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">text_cleanup</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon output">📝</div>
+                            <div class="node-content">
+                                <div class="node-title">extracted_text</div>
+                                <div class="node-subtitle">Clean Text Output</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getValidateFormatWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">text_data</div>
+                                <div class="node-subtitle">Input Text</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('schema_validation', 'schema_validation', 4)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">schema_validation</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('data_normalization', 'data_normalization', 4)">
+                            <div class="node-icon foreach">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">data_normalization</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon output">✅</div>
+                            <div class="node-content">
+                                <div class="node-title">validation_result</div>
+                                <div class="node-subtitle">Validation Status</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getParseTransactionsWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">statement_content</div>
+                                <div class="node-subtitle">Statement Data</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('transaction_categorization', 'transaction_categorization', 4)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">transaction_categorization</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('amount_extraction', 'amount_extraction', 4)">
+                            <div class="node-icon update-assets">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">amount_extraction</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('date_parsing', 'date_parsing', 4)">
+                            <div class="node-icon foreach">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">date_parsing</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon output">📊</div>
+                            <div class="node-content">
+                                <div class="node-title">parsed_transactions</div>
+                                <div class="node-subtitle">Transaction List</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getExtractMetadataWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">document</div>
+                                <div class="node-subtitle">Input Document</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('account_identification', 'account_identification', 4)">
+                            <div class="node-icon get-latest">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">account_identification</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon output">🏷️</div>
+                            <div class="node-content">
+                                <div class="node-title">metadata</div>
+                                <div class="node-subtitle">Document Metadata</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getQueryDatabaseWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📝</div>
+                            <div class="node-content">
+                                <div class="node-title">query_params</div>
+                                <div class="node-subtitle">Query Parameters</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('sql_query_builder', 'sql_query_builder', 4)">
+                            <div class="node-icon get-latest">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">sql_query_builder</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('connection_manager', 'connection_manager', 4)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">connection_manager</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon output">🗃️</div>
+                            <div class="node-content">
+                                <div class="node-title">query_results</div>
+                                <div class="node-subtitle">Database Results</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getFilterRecordsWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">🗃️</div>
+                            <div class="node-content">
+                                <div class="node-title">raw_records</div>
+                                <div class="node-subtitle">Raw Data</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('result_pagination', 'result_pagination', 4)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">result_pagination</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('cache_management', 'cache_management', 4)">
+                            <div class="node-icon foreach">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">cache_management</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon output">📋</div>
+                            <div class="node-content">
+                                <div class="node-title">filtered_records</div>
+                                <div class="node-subtitle">Filtered Results</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Placeholder functions for all other Level 3 and Level 4 ToolNodes
+        function getFormatOutputWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon foreach">🔧</div><div class="node-content"><div class="node-title">format_output</div><div class="node-subtitle">Formats data for output</div></div></div></div>`;
+        }
+
+        function getCalculateBalanceWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon update-assets">🔧</div><div class="node-content"><div class="node-title">calculate_balance</div><div class="node-subtitle">Calculates account balance</div></div></div></div>`;
+        }
+
+        function getUpdatePortfolioWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon foreach">🔧</div><div class="node-content"><div class="node-title">update_portfolio</div><div class="node-subtitle">Updates investment portfolio</div></div></div></div>`;
+        }
+
+        function getGenerateReportWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon parse">🔧</div><div class="node-content"><div class="node-title">generate_report</div><div class="node-subtitle">Generates financial report</div></div></div></div>`;
+        }
+
+        function getOCRProcessingWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon read-doc">🔧</div><div class="node-content"><div class="node-title">ocr_processing</div><div class="node-subtitle">OCR text extraction</div></div></div></div>`;
+        }
+
+        function getTextCleanupWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon parse">🔧</div><div class="node-content"><div class="node-title">text_cleanup</div><div class="node-subtitle">Cleans extracted text</div></div></div></div>`;
+        }
+
+        function getSchemaValidationWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon parse">🔧</div><div class="node-content"><div class="node-title">schema_validation</div><div class="node-subtitle">Validates data schema</div></div></div></div>`;
+        }
+
+        function getDataNormalizationWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon foreach">🔧</div><div class="node-content"><div class="node-title">data_normalization</div><div class="node-subtitle">Normalizes data format</div></div></div></div>`;
+        }
+
+        function getTransactionCategorizationWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon parse">🔧</div><div class="node-content"><div class="node-title">transaction_categorization</div><div class="node-subtitle">Categorizes transactions</div></div></div></div>`;
+        }
+
+        function getAmountExtractionWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon update-assets">🔧</div><div class="node-content"><div class="node-title">amount_extraction</div><div class="node-subtitle">Extracts amounts</div></div></div></div>`;
+        }
+
+        function getDateParsingWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon foreach">🔧</div><div class="node-content"><div class="node-title">date_parsing</div><div class="node-subtitle">Parses transaction dates</div></div></div></div>`;
+        }
+
+        function getAccountIdentificationWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon get-latest">🔧</div><div class="node-content"><div class="node-title">account_identification</div><div class="node-subtitle">Identifies account info</div></div></div></div>`;
+        }
+
+        function getSQLQueryBuilderWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon get-latest">🔧</div><div class="node-content"><div class="node-title">sql_query_builder</div><div class="node-subtitle">Builds SQL queries</div></div></div></div>`;
+        }
+
+        function getConnectionManagerWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon parse">🔧</div><div class="node-content"><div class="node-title">connection_manager</div><div class="node-subtitle">Manages DB connections</div></div></div></div>`;
+        }
+
+        function getResultPaginationWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon parse">🔧</div><div class="node-content"><div class="node-title">result_pagination</div><div class="node-subtitle">Paginates results</div></div></div></div>`;
+        }
+
+        function getCacheManagementWorkflow() {
+            return `<div class="workflow-flow"><div class="workflow-node"><div class="node-icon foreach">🔧</div><div class="node-content"><div class="node-title">cache_management</div><div class="node-subtitle">Manages data cache</div></div></div></div>`;
+        }
 
         // Initialize
         renderContent();
