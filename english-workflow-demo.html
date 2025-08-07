@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Processing Workflow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            line-height: 1.4;
+        }
+
+        .workflow-header {
+            background: white;
+            border-bottom: 1px solid #e1e5e9;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .workflow-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .workflow-title h1 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mode-btn {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            color: #374151;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .workflow-container {
+            height: calc(100vh - 60px);
+            display: flex;
+        }
+
+        .main-canvas {
+            flex: 1;
+            background: #fafbfc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-bar {
+            background: white;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            min-height: 44px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .canvas-content {
+            padding: 40px;
+            height: calc(100% - 44px);
+            overflow: auto;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .breadcrumb-item {
+            cursor: pointer;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.current {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .breadcrumb-separator {
+            color: #9ca3af;
+        }
+
+        /* Workflow Nodes */
+        .workflow-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .workflow-node {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 200px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .workflow-node.clickable {
+            cursor: pointer;
+        }
+
+        .workflow-node.clickable:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+            border-color: #3b82f6;
+        }
+
+        .node-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Node colors matching your images exactly */
+        .node-icon.get-doc { background: #f59e0b; }
+        .node-icon.foreach { background: #10b981; }
+        .node-icon.get-latest { background: #8b5cf6; }
+        .node-icon.update-assets { background: #f59e0b; }
+        .node-icon.read-doc { background: #f59e0b; }
+        .node-icon.parse { background: #8b5cf6; }
+        .node-icon.item { background: #3b82f6; }
+        .node-icon.output { background: #10b981; }
+
+        .node-content {
+            flex: 1;
+        }
+
+        .node-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 2px;
+        }
+
+        .node-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Yellow ToolNode badge */
+        .toolnode-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #eab308;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .workflow-node.clickable .toolnode-badge {
+            display: block;
+        }
+
+        /* Flow connectors */
+        .flow-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+
+        .flow-arrow-down {
+            font-size: 20px;
+            transform: rotate(90deg);
+        }
+
+        .flow-arrow-right {
+            font-size: 20px;
+        }
+
+        /* Mode description */
+        .mode-description {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 32px;
+        }
+
+        .mode-description.mode2 {
+            background: #fef3c7;
+            border-color: #fde68a;
+        }
+
+        .mode-description h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-description.mode2 h3 {
+            color: #92400e;
+        }
+
+        .mode-description p {
+            font-size: 13px;
+            color: #1e40af;
+            opacity: 0.8;
+        }
+
+        .mode-description.mode2 p {
+            color: #92400e;
+        }
+
+        .mode-badge {
+            background: #10b981;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .mode-badge.alternative {
+            background: #f59e0b;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #6b7280;
+        }
+
+        .zoom-btn:hover {
+            background: #f9fafb;
+        }
+
+        /* Grid background exactly like your image */
+        .main-canvas::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .view-only-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="workflow-header">
+        <div class="workflow-title">
+            <span>🏠</span>
+            <h1>Loan Processing Workflow</h1>
+        </div>
+        <div class="mode-selector">
+            <span style="font-size: 13px; color: #6b7280;">Navigation Mode:</span>
+            <button class="mode-btn active" data-mode="mode1">
+                Mode 1: Main Flow New Tabs + Nested Breadcrumbs
+            </button>
+            <button class="mode-btn" data-mode="mode2">
+                Mode 2: All ToolNodes New Tabs
+            </button>
+        </div>
+    </div>
+
+    <div class="workflow-container">
+        <div class="main-canvas">
+            <div class="view-only-label">View Only</div>
+            
+            <div class="tab-bar" id="tabBar">
+                <div class="tab active" data-tab="main">
+                    Loan Processing Workflow
+                </div>
+            </div>
+
+            <div class="canvas-content" id="canvasContent">
+                <!-- Content will be dynamically generated -->
+            </div>
+
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="zoomIn()">+</button>
+                <button class="zoom-btn" onclick="zoomOut()">-</button>
+                <button class="zoom-btn" onclick="zoomFit()">⊡</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'mode1';
+        let tabs = [{ id: 'main', title: 'Loan Processing Workflow', content: 'main', breadcrumb: ['Loan Processing Workflow'] }];
+        let activeTab = 'main';
+        let tabCounter = 1;
+
+        // Mode switching
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentMode = e.target.dataset.mode;
+                resetDemo();
+            });
+        });
+
+        function resetDemo() {
+            tabs = [{ id: 'main', title: 'Loan Processing Workflow', content: 'main', breadcrumb: ['Loan Processing Workflow'] }];
+            activeTab = 'main';
+            tabCounter = 1;
+            renderTabs();
+            renderContent();
+        }
+
+        function handleToolNodeClick(nodeId, nodeTitle, level) {
+            if (currentMode === 'mode1') {
+                if (level === 1) {
+                    // Main flow nodes open new tabs
+                    const newTabId = `tab_${tabCounter++}`;
+                    createTab(newTabId, nodeTitle, nodeId, [nodeTitle]);
+                } else {
+                    // Nested nodes use breadcrumb navigation
+                    const currentTab = tabs.find(tab => tab.id === activeTab);
+                    const newBreadcrumb = [...currentTab.breadcrumb, nodeTitle];
+                    navigateInCurrentTab(nodeId, newBreadcrumb);
+                }
+            } else {
+                // Mode 2: All nodes open new tabs
+                const newTabId = `tab_${tabCounter++}`;
+                createTab(newTabId, nodeTitle, nodeId, [nodeTitle]);
+            }
+        }
+
+        function createTab(id, title, content, breadcrumb = []) {
+            const tab = { id, title, content, breadcrumb: [...breadcrumb] };
+            tabs.push(tab);
+            activeTab = id;
+            renderTabs();
+            renderContent();
+        }
+
+        function navigateInCurrentTab(content, breadcrumb) {
+            const currentTab = tabs.find(tab => tab.id === activeTab);
+            if (currentTab) {
+                currentTab.content = content;
+                currentTab.breadcrumb = [...breadcrumb];
+                renderContent();
+            }
+        }
+
+        function renderTabs() {
+            const tabBar = document.getElementById('tabBar');
+            tabBar.innerHTML = tabs.map(tab => `
+                <div class="tab ${tab.id === activeTab ? 'active' : ''}" data-tab="${tab.id}" onclick="switchTab('${tab.id}')">
+                    ${tab.title}
+                    ${tab.id !== 'main' ? `<button class="tab-close" onclick="closeTab('${tab.id}'); event.stopPropagation();">×</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            renderTabs();
+            renderContent();
+        }
+
+        function closeTab(tabId) {
+            if (tabId === 'main') return;
+            
+            tabs = tabs.filter(tab => tab.id !== tabId);
+            
+            if (activeTab === tabId) {
+                activeTab = tabs[tabs.length - 1].id;
+            }
+            
+            renderTabs();
+            renderContent();
+        }
+
+        function renderContent() {
+            const activeTabData = tabs.find(tab => tab.id === activeTab);
+            if (!activeTabData) return;
+
+            const content = getContentByType(activeTabData.content);
+            const showBreadcrumb = currentMode === 'mode1' && activeTabData.breadcrumb.length > 1;
+            
+            document.getElementById('canvasContent').innerHTML = `
+                ${getModeDescription()}
+                ${showBreadcrumb ? renderBreadcrumb(activeTabData.breadcrumb) : ''}
+                ${content}
+            `;
+        }
+
+        function getModeDescription() {
+            const descriptions = {
+                mode1: {
+                    title: 'Mode 1: Main Flow New Tabs + Nested Breadcrumbs',
+                    desc: 'Main flow ToolNodes open new tabs, but nested nodes use breadcrumb navigation within the same tab',
+                    badge: 'Recommended'
+                },
+                mode2: {
+                    title: 'Mode 2: All ToolNodes Open New Tabs (Flat Structure)',
+                    desc: 'Every ToolNode click opens a new tab, no breadcrumb navigation - completely flat structure',
+                    badge: 'Alternative'
+                }
+            };
+
+            const desc = descriptions[currentMode];
+            return `
+                <div class="mode-description ${currentMode}">
+                    <h3>
+                        ${desc.title}
+                        <span class="mode-badge ${currentMode === 'mode2' ? 'alternative' : ''}">${desc.badge}</span>
+                    </h3>
+                    <p>${desc.desc}</p>
+                </div>
+            `;
+        }
+
+        function renderBreadcrumb(breadcrumb) {
+            return `
+                <div class="breadcrumb">
+                    ${breadcrumb.map((item, index) => `
+                        <span class="breadcrumb-item ${index === breadcrumb.length - 1 ? 'current' : ''}" 
+                              ${index < breadcrumb.length - 1 ? `onclick="handleBreadcrumbClick(${index})"` : ''}>
+                            ${item}
+                        </span>
+                        ${index < breadcrumb.length - 1 ? '<span class="breadcrumb-separator">></span>' : ''}
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getContentByType(contentType) {
+            const contents = {
+                'main': getMainWorkflow(),
+                'foreach_parse_bank_statements': getForEachParseWorkflow(),
+                'get_latest_bank_statement': getLatestBankStatementWorkflow(),
+                'update_assets': getUpdateAssetsWorkflow(),
+                'read_doc': getReadDocWorkflow(),
+                'parse_bank_statement': getParseBankStatementWorkflow()
+            };
+
+            return contents[contentType] || `
+                <div class="workflow-flow">
+                    <div class="workflow-node">
+                        <div class="node-icon foreach">🔧</div>
+                        <div class="node-content">
+                            <div class="node-title">${contentType}</div>
+                            <div class="node-subtitle">ToolNode Details</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getMainWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <!-- Get Document -->
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon get-doc">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">get_doc</div>
+                                <div class="node-subtitle">category</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- ForEach Parse Bank Statements -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('foreach_parse_bank_statements', 'foreach_parse_bank_statements', 1)">
+                            <div class="node-icon foreach">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">foreach_parse_bank_statements</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Parallel Processing -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('get_latest_bank_statement', 'get_latest_bank_statement', 1)">
+                            <div class="node-icon get-latest">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">get_latest_bank_statement</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('update_assets', 'update_assets', 1)">
+                            <div class="node-icon update-assets">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">update_assets</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getForEachParseWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <!-- Item Input -->
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📋</div>
+                            <div class="node-content">
+                                <div class="node-title">Item</div>
+                                <div class="node-subtitle">Input</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Read Doc -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('read_doc', 'read_doc', 2)">
+                            <div class="node-icon read-doc">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">read_doc</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Parse Bank Statement -->
+                    <div class="flow-row">
+                        <div class="workflow-node clickable" onclick="handleToolNodeClick('parse_bank_statement', 'parse_bank_statement', 2)">
+                            <div class="node-icon parse">🔧</div>
+                            <div class="node-content">
+                                <div class="node-title">parse_bank_statement</div>
+                                <div class="node-subtitle">ToolNode</div>
+                            </div>
+                            <div class="toolnode-badge">🔧</div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <!-- Output -->
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon output">📤</div>
+                            <div class="node-content">
+                                <div class="node-title">Output</div>
+                                <div class="node-subtitle">Result</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getReadDocWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon read-doc">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">name</div>
+                                <div class="node-subtitle">Input Parameter</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node">
+                            <div class="node-icon output">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">content</div>
+                                <div class="node-subtitle">Output Content</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getParseBankStatementWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📝</div>
+                            <div class="node-content">
+                                <div class="node-title">request</div>
+                                <div class="node-subtitle">Input Request</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <div class="flow-arrow-down">→</div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📄</div>
+                            <div class="node-content">
+                                <div class="node-title">content</div>
+                                <div class="node-subtitle">Document Content</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getLatestBankStatementWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📝</div>
+                            <div class="node-content">
+                                <div class="node-title">request</div>
+                                <div class="node-subtitle">Query Request</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node">
+                            <div class="node-icon output">📋</div>
+                            <div class="node-content">
+                                <div class="node-title">bank_statements</div>
+                                <div class="node-subtitle">Bank Statement Data</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getUpdateAssetsWorkflow() {
+            return `
+                <div class="workflow-flow">
+                    <div class="flow-row">
+                        <div class="workflow-node">
+                            <div class="node-icon item">📋</div>
+                            <div class="node-content">
+                                <div class="node-title">bank_statements</div>
+                                <div class="node-subtitle">Bank Statement Input</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector">
+                            <div class="flow-arrow-right">→</div>
+                        </div>
+
+                        <div class="workflow-node">
+                            <div class="node-icon output">💰</div>
+                            <div class="node-content">
+                                <div class="node-title">updated_assets</div>
+                                <div class="node-subtitle">Updated Assets</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleBreadcrumbClick(index) {
+            const currentTab = tabs.find(tab => tab.id === activeTab);
+            if (currentTab && index < currentTab.breadcrumb.length - 1) {
+                const newBreadcrumb = currentTab.breadcrumb.slice(0, index + 1);
+                const targetContent = newBreadcrumb[newBreadcrumb.length - 1].toLowerCase().replace(/\s+/g, '_');
+                navigateInCurrentTab(targetContent, newBreadcrumb);
+            }
+        }
+
+        // Zoom functions
+        function zoomIn() { console.log('Zoom in'); }
+        function zoomOut() { console.log('Zoom out'); }
+        function zoomFit() { console.log('Zoom fit'); }
+
+        // Initialize
+        renderContent();
+    </script>
+</body>
+</html>
