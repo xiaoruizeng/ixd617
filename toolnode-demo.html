@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolNode 跳转逻辑对比 Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .demo-area {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .tab-bar {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            overflow-x: auto;
+            min-height: 50px;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-right: 1px solid #e9ecef;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .tab-close {
+            margin-left: 8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #dc3545;
+            color: white;
+            border: none;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-close:hover {
+            background: #c82333;
+        }
+
+        .tab-content {
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .breadcrumb-item {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-item.current {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .breadcrumb-separator {
+            color: #999;
+        }
+
+        .toolnode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .toolnode {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .toolnode:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+        }
+
+        .toolnode h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .toolnode p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .toolnode .level-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .mode-description {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .mode-description h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .mode-description p {
+            color: #424242;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ToolNode 跳转逻辑对比 Demo</h1>
+            <p>体验两种不同的工具节点导航模式</p>
+        </div>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="mode1">
+                模式一：主流程新Tab + 嵌套Breadcrumb
+            </button>
+            <button class="mode-btn" data-mode="mode2">
+                模式二：所有节点都新Tab (Flat)
+            </button>
+        </div>
+
+        <div class="demo-area">
+            <div class="tab-bar" id="tabBar">
+                <div class="tab active" data-tab="main">
+                    <span>主流程</span>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tabContent">
+                <!-- 内容将通过 JavaScript 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ToolNodeDemo {
+            constructor() {
+                this.currentMode = 'mode1';
+                this.tabs = [{ id: 'main', title: '主流程', content: 'main', breadcrumb: ['主流程'] }];
+                this.activeTab = 'main';
+                this.tabCounter = 1;
+                
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.renderContent();
+            }
+
+            bindEvents() {
+                // 模式切换
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentMode = e.target.dataset.mode;
+                        this.resetDemo();
+                    });
+                });
+
+                // Tab 切换事件委托
+                document.getElementById('tabBar').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tab-close')) {
+                        e.stopPropagation();
+                        this.closeTab(e.target.closest('.tab').dataset.tab);
+                    } else if (e.target.closest('.tab')) {
+                        this.switchTab(e.target.closest('.tab').dataset.tab);
+                    }
+                });
+            }
+
+            resetDemo() {
+                this.tabs = [{ id: 'main', title: '主流程', content: 'main', breadcrumb: ['主流程'] }];
+                this.activeTab = 'main';
+                this.tabCounter = 1;
+                this.renderTabs();
+                this.renderContent();
+            }
+
+            createTab(id, title, content, breadcrumb = []) {
+                const tab = {
+                    id,
+                    title,
+                    content,
+                    breadcrumb: [...breadcrumb]
+                };
+                this.tabs.push(tab);
+                this.activeTab = id;
+                this.renderTabs();
+                this.renderContent();
+            }
+
+            closeTab(tabId) {
+                if (tabId === 'main') return; // 不能关闭主流程tab
+                
+                this.tabs = this.tabs.filter(tab => tab.id !== tabId);
+                
+                if (this.activeTab === tabId) {
+                    this.activeTab = this.tabs[this.tabs.length - 1].id;
+                }
+                
+                this.renderTabs();
+                this.renderContent();
+            }
+
+            switchTab(tabId) {
+                this.activeTab = tabId;
+                this.renderTabs();
+                this.renderContent();
+            }
+
+            navigateInCurrentTab(content, breadcrumb) {
+                const currentTab = this.tabs.find(tab => tab.id === this.activeTab);
+                if (currentTab) {
+                    currentTab.content = content;
+                    currentTab.breadcrumb = [...breadcrumb];
+                    this.renderContent();
+                }
+            }
+
+            handleToolNodeClick(nodeId, nodeTitle, level) {
+                if (this.currentMode === 'mode1') {
+                    // 模式一：主流程节点开新tab，嵌套节点用breadcrumb
+                    if (level === 1) {
+                        // 主流程节点，开新tab
+                        const newTabId = `tab_${this.tabCounter++}`;
+                        this.createTab(newTabId, nodeTitle, nodeId, [nodeTitle]);
+                    } else {
+                        // 嵌套节点，在当前tab内导航
+                        const currentTab = this.tabs.find(tab => tab.id === this.activeTab);
+                        const newBreadcrumb = [...currentTab.breadcrumb, nodeTitle];
+                        this.navigateInCurrentTab(nodeId, newBreadcrumb);
+                    }
+                } else {
+                    // 模式二：所有节点都开新tab
+                    const newTabId = `tab_${this.tabCounter++}`;
+                    this.createTab(newTabId, nodeTitle, nodeId, [nodeTitle]);
+                }
+            }
+
+            handleBreadcrumbClick(index) {
+                const currentTab = this.tabs.find(tab => tab.id === this.activeTab);
+                if (currentTab && index < currentTab.breadcrumb.length - 1) {
+                    const newBreadcrumb = currentTab.breadcrumb.slice(0, index + 1);
+                    const targetContent = this.getBreadcrumbContent(newBreadcrumb);
+                    this.navigateInCurrentTab(targetContent, newBreadcrumb);
+                }
+            }
+
+            getBreadcrumbContent(breadcrumb) {
+                if (breadcrumb.length === 1) {
+                    return breadcrumb[0].toLowerCase().replace(/\s+/g, '_');
+                }
+                return breadcrumb[breadcrumb.length - 1].toLowerCase().replace(/\s+/g, '_');
+            }
+
+            renderTabs() {
+                const tabBar = document.getElementById('tabBar');
+                tabBar.innerHTML = this.tabs.map(tab => `
+                    <div class="tab ${tab.id === this.activeTab ? 'active' : ''}" data-tab="${tab.id}">
+                        <span>${tab.title}</span>
+                        ${tab.id !== 'main' ? '<button class="tab-close">×</button>' : ''}
+                    </div>
+                `).join('');
+            }
+
+            renderContent() {
+                const activeTab = this.tabs.find(tab => tab.id === this.activeTab);
+                if (!activeTab) return;
+
+                const content = this.getContentByType(activeTab.content);
+                const showBreadcrumb = this.currentMode === 'mode1' && activeTab.breadcrumb.length > 1;
+                
+                document.getElementById('tabContent').innerHTML = `
+                    ${this.getModeDescription()}
+                    ${showBreadcrumb ? this.renderBreadcrumb(activeTab.breadcrumb) : ''}
+                    ${content}
+                `;
+            }
+
+            getModeDescription() {
+                const descriptions = {
+                    mode1: {
+                        title: '模式一：主流程新Tab + 嵌套Breadcrumb（推荐）',
+                        desc: '主流程中的ToolNode（A、B）点击后开新tab，但内部的子节点（A1、A2）只在当前tab内用breadcrumb切换'
+                    },
+                    mode2: {
+                        title: '模式二：所有节点都新Tab（Flat结构）',
+                        desc: '无论来自哪里，点击任何ToolNode都会新开tab，没有breadcrumb，只能靠tab切换'
+                    }
+                };
+
+                const desc = descriptions[this.currentMode];
+                return `
+                    <div class="mode-description">
+                        <h4>${desc.title}</h4>
+                        <p>${desc.desc}</p>
+                    </div>
+                `;
+            }
+
+            renderBreadcrumb(breadcrumb) {
+                return `
+                    <div class="breadcrumb">
+                        ${breadcrumb.map((item, index) => `
+                            <span class="breadcrumb-item ${index === breadcrumb.length - 1 ? 'current' : ''}" 
+                                  ${index < breadcrumb.length - 1 ? `onclick="demo.handleBreadcrumbClick(${index})"` : ''}>
+                                ${item}
+                            </span>
+                            ${index < breadcrumb.length - 1 ? '<span class="breadcrumb-separator">></span>' : ''}
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            getContentByType(contentType) {
+                const contents = {
+                    'main': this.getMainContent(),
+                    '主流程': this.getMainContent(),
+                    'tool_a': this.getToolAContent(),
+                    'tool_b': this.getToolBContent(),
+                    'tool_c': this.getToolCContent(),
+                    'sub_a1': this.getSubA1Content(),
+                    'sub_a2': this.getSubA2Content(),
+                    'sub_a3': this.getSubA3Content(),
+                    'sub_b1': this.getSubB1Content(),
+                    'sub_b2': this.getSubB2Content(),
+                    'deep_a1_1': this.getDeepA1_1Content(),
+                    'deep_a1_2': this.getDeepA1_2Content()
+                };
+
+                return contents[contentType] || `<h2>内容：${contentType}</h2><p>这是 ${contentType} 的内容</p>`;
+            }
+
+            getMainContent() {
+                return `
+                    <h2>主流程 ToolNodes</h2>
+                    <div class="toolnode-grid">
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('tool_a', 'Tool A', 1)">
+                            <div class="level-indicator">Level 1</div>
+                            <h3>Tool A - 数据分析</h3>
+                            <p>主要的数据分析工具，包含多个子功能模块</p>
+                        </div>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('tool_b', 'Tool B', 1)">
+                            <div class="level-indicator">Level 1</div>
+                            <h3>Tool B - 报表生成</h3>
+                            <p>生成各种类型的报表和图表</p>
+                        </div>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('tool_c', 'Tool C', 1)">
+                            <div class="level-indicator">Level 1</div>
+                            <h3>Tool C - 系统配置</h3>
+                            <p>系统参数配置和管理功能</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getToolAContent() {
+                return `
+                    <h2>Tool A - 数据分析</h2>
+                    <p>这是数据分析工具的主页面，包含以下子功能：</p>
+                    <div class="toolnode-grid">
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_a1', 'A1 - 数据导入', 2)">
+                            <div class="level-indicator">Level 2</div>
+                            <h3>A1 - 数据导入</h3>
+                            <p>支持多种格式的数据导入功能</p>
+                        </div>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_a2', 'A2 - 数据清洗', 2)">
+                            <div class="level-indicator">Level 2</div>
+                            <h3>A2 - 数据清洗</h3>
+                            <p>数据预处理和清洗工具</p>
+                        </div>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_a3', 'A3 - 统计分析', 2)">
+                            <div class="level-indicator">Level 2</div>
+                            <h3>A3 - 统计分析</h3>
+                            <p>各种统计分析方法和算法</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getToolBContent() {
+                return `
+                    <h2>Tool B - 报表生成</h2>
+                    <p>报表生成工具的功能模块：</p>
+                    <div class="toolnode-grid">
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_b1', 'B1 - 图表设计', 2)">
+                            <div class="level-indicator">Level 2</div>
+                            <h3>B1 - 图表设计</h3>
+                            <p>可视化图表的设计和配置</p>
+                        </div>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('sub_b2', 'B2 - 报表模板', 2)">
+                            <div class="level-indicator">Level 2</div>
+                            <h3>B2 - 报表模板</h3>
+                            <p>预设的报表模板和自定义选项</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getToolCContent() {
+                return `
+                    <h2>Tool C - 系统配置</h2>
+                    <p>系统配置和管理功能，这是一个相对简单的工具，没有复杂的子功能。</p>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                        <h4>配置选项</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>用户权限管理</li>
+                            <li>系统参数设置</li>
+                            <li>数据库配置</li>
+                            <li>安全策略设置</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            getSubA1Content() {
+                return `
+                    <h2>A1 - 数据导入</h2>
+                    <p>数据导入功能的详细配置和操作：</p>
+                    <div class="toolnode-grid">
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('deep_a1_1', 'A1.1 - CSV导入', 3)">
+                            <div class="level-indicator">Level 3</div>
+                            <h3>A1.1 - CSV导入</h3>
+                            <p>CSV文件的导入和解析</p>
+                        </div>
+                        <div class="toolnode" onclick="demo.handleToolNodeClick('deep_a1_2', 'A1.2 - 数据库连接', 3)">
+                            <div class="level-indicator">Level 3</div>
+                            <h3>A1.2 - 数据库连接</h3>
+                            <p>连接外部数据库导入数据</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getSubA2Content() {
+                return `
+                    <h2>A2 - 数据清洗</h2>
+                    <p>数据清洗工具提供以下功能：</p>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                        <h4>清洗功能</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>缺失值处理</li>
+                            <li>异常值检测</li>
+                            <li>数据格式标准化</li>
+                            <li>重复数据去除</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            getSubA3Content() {
+                return `
+                    <h2>A3 - 统计分析</h2>
+                    <p>提供各种统计分析方法：</p>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                        <h4>分析方法</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>描述性统计</li>
+                            <li>相关性分析</li>
+                            <li>回归分析</li>
+                            <li>假设检验</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            getSubB1Content() {
+                return `
+                    <h2>B1 - 图表设计</h2>
+                    <p>可视化图表的设计工具：</p>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                        <h4>图表类型</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>柱状图</li>
+                            <li>折线图</li>
+                            <li>饼图</li>
+                            <li>散点图</li>
+                            <li>热力图</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            getSubB2Content() {
+                return `
+                    <h2>B2 - 报表模板</h2>
+                    <p>预设的报表模板管理：</p>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                        <h4>模板类型</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>财务报表</li>
+                            <li>销售报表</li>
+                            <li>运营报表</li>
+                            <li>自定义模板</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            getDeepA1_1Content() {
+                return `
+                    <h2>A1.1 - CSV导入</h2>
+                    <p>CSV文件导入的详细配置：</p>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                        <h4>导入选项</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>文件编码选择</li>
+                            <li>分隔符设置</li>
+                            <li>列头识别</li>
+                            <li>数据类型推断</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            getDeepA1_2Content() {
+                return `
+                    <h2>A1.2 - 数据库连接</h2>
+                    <p>数据库连接配置：</p>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                        <h4>支持的数据库</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>MySQL</li>
+                            <li>PostgreSQL</li>
+                            <li>SQL Server</li>
+                            <li>Oracle</li>
+                            <li>MongoDB</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        // 初始化demo
+        const demo = new ToolNodeDemo();
+    </script>
+</body>
+</html>
