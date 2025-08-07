@@ -393,7 +393,6 @@
             </div>
 
             <div class="canvas-content" id="canvasContent">
-                <div class="view-only-label">View Only</div>
                 <!-- Content will be dynamically generated -->
             </div>
 
@@ -500,9 +499,10 @@
 
             const content = getContentByType(activeTabData.content);
             const showBreadcrumb = currentMode === 'mode1' && activeTabData.breadcrumb.length > 1;
+            const showViewOnly = activeTabData.id !== 'main'; // Only show View Only for non-main tabs
             
             document.getElementById('canvasContent').innerHTML = `
-                <div class="view-only-label">View Only</div>
+                ${showViewOnly ? '<div class="view-only-label">View Only</div>' : ''}
                 ${getModeDescription()}
                 ${showBreadcrumb ? renderBreadcrumb(activeTabData.breadcrumb) : ''}
                 ${content}
